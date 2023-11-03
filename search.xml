@@ -1,6 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Spark AQE 的三大特性</title>
+    <url>/Spark-AQE-%E7%9A%84%E4%B8%89%E5%A4%A7%E7%89%B9%E6%80%A7/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>升级Spark3.4.1</title>
+    <url>/%E5%8D%87%E7%BA%A7Spark3-4-1/</url>
+    <content><![CDATA[<p><a href="https://spark.apache.org/">Apache Spark</a>，是一个多语言引擎，用于在单节点或集群上执行数据工程和机器学习的工具。</p>
+<span id="more"></span>
+
+<ul>
+<li>Batch &#x2F; streaming data 批量&#x2F;流式数据<ul>
+<li>Python、SQL、Scala、Java或R，统一数据的批处理和实时流处理</li>
+</ul>
+</li>
+<li>SQL analytics SQL分析<ul>
+<li>执行快速、分布式的ANSI SQL查询，以实现仪表板和即席报告。</li>
+<li>比大多数数据仓库更快。</li>
+</ul>
+</li>
+<li>Data science at scale 大规模数据科学<ul>
+<li>对PB级数据执行探索性数据分析（EDA），而无需采用下采样</li>
+</ul>
+</li>
+<li>Machine learning 机器学习<ul>
+<li>在电脑上训练机器学习算法，并使用相同的代码扩展到数千台机器的容错集群</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="官网下载spark3-4-1的jar包"><a href="#官网下载spark3-4-1的jar包" class="headerlink" title="官网下载spark3.4.1的jar包"></a>官网下载spark3.4.1的jar包</h2><h3 id="Spark-Download"><a href="#Spark-Download" class="headerlink" title="Spark Download"></a>Spark Download</h3><p>下载  spark-3.4.1-bin-hadoop3.tgz 后，在相应目录进行解压操作</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">tar xvf  spark-3.4.1-bin-hadoop3.tgz  -C /var/local/</span><br></pre></td></tr></table></figure>
+
+<h2 id="软链更新"><a href="#软链更新" class="headerlink" title="软链更新"></a>软链更新</h2><h3 id="删除之前的软链"><a href="#删除之前的软链" class="headerlink" title="删除之前的软链"></a>删除之前的软链</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">rm spark</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建新的软链："><a href="#创建新的软链：" class="headerlink" title="创建新的软链："></a>创建新的软链：</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ln -s /var/local/spark-3.4.1-bin-hadoop3  /opt/soft/spark</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>❌软链报错：目录无法访问<br>💡解决方法：用绝对路径（上面已用绝对路径）</p>
+</blockquote>
+<h2 id="修改配置文件"><a href="#修改配置文件" class="headerlink" title="修改配置文件"></a>修改配置文件</h2><h3 id="将以前版本的配置文件-copy-到当前-spark-conf-文件夹下"><a href="#将以前版本的配置文件-copy-到当前-spark-conf-文件夹下" class="headerlink" title="将以前版本的配置文件 copy 到当前 spark&#x2F;conf 文件夹下"></a>将以前版本的配置文件 copy 到当前 spark&#x2F;conf 文件夹下</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">scp spark-env.sh spark-defaults.conf  core-site.xml  hdfs-site.xml  hive-site.xml  yarn-site.xml  &lt;目标地址IP&gt;: /opt/soft/spark/conf</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>配置文件包括：<br>spark-env.sh<br>spark-defaults.conf<br>core-site.xml<br>hdfs-site.xml<br>hive-site.xml<br>yarn-site.xml （不必选）</p>
+</blockquote>
+<h3 id="Lib包更新"><a href="#Lib包更新" class="headerlink" title="Lib包更新"></a>Lib包更新</h3><ol>
+<li>更新 $SPARK_HOME&#x2F;jars&#x2F;  目录</li>
+</ol>
+<ul>
+<li>下载 iceberg-spark-runtime-*.jar</li>
+<li>下载 hive-hcatalog-core-*.jar</li>
+</ul>
+<ol start="2">
+<li>更新HDFS目录 sparkjars&#x2F; 的共享jar包</li>
+</ol>
+<ul>
+<li>将 $SPARK_HOME&#x2F;jars 下面的  *.jar  都上传到此目录</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">hdfs上创建目录</span></span><br><span class="line">hdfs dfs -mkdir /sparkjars/spark_341</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>上传命令</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">hdfs dfs -put $SPARK_HOME/jars/*.jar /sparkjars/spark_3xx</span><br></pre></td></tr></table></figure>
+
+<h2 id="测试spark"><a href="#测试spark" class="headerlink" title="测试spark"></a>测试spark</h2><h3 id="提交Pi计算测试"><a href="#提交Pi计算测试" class="headerlink" title="提交Pi计算测试"></a>提交Pi计算测试</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">date;</span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">SPARK_HOME/bin/spark-submit</span></span><br><span class="line">--class org.apache.spark.examples.SparkPi</span><br><span class="line">--master yarn</span><br><span class="line">--deploy-mode client</span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">SPARK_HOME/examples/jars/spark-examples*.jar</span></span><br><span class="line">10;date</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">/opt/soft/spark/bin/spark-submit</span><br><span class="line">--class org.apache.spark.examples.SparkPi</span><br><span class="line">--master yarn</span><br><span class="line">--deploy-mode client</span><br><span class="line">/opt/soft/spark/examples/jars/spark-examples*.jar</span><br><span class="line">10</span><br></pre></td></tr></table></figure>
+
+<h3 id="yarn-模式直接运行"><a href="#yarn-模式直接运行" class="headerlink" title="yarn 模式直接运行"></a>yarn 模式直接运行</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$</span><span class="language-bash">SPARK_HOME/bin/spark-submit --class org.apache.spark.examples.SparkPi</span></span><br><span class="line">--master yarn</span><br><span class="line">--deploy-mode cluster</span><br><span class="line">--driver-memory 4g</span><br><span class="line">--executor-memory 2g</span><br><span class="line">--executor-cores 2</span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">SPARK_HOME/examples/jars/spark-examples*.jar</span></span><br><span class="line">10</span><br></pre></td></tr></table></figure>
+
+<h3 id="spark-thrift-server测试"><a href="#spark-thrift-server测试" class="headerlink" title="spark thrift server测试"></a>spark thrift server测试</h3><ol>
+<li>sparksql 测试</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$</span><span class="language-bash">SPARK_HOME/bin/spark-sql --executor-cores 1 --executor-memory 2G --num-executors 1 --master yarn  --name spark_sql_test</span></span><br><span class="line"></span><br><span class="line">select count(*) from essd_db.ods_essd_dut_result</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Spark</category>
+      </categories>
+      <tags>
+        <tag>升级</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Nice To Meet You, My Blog!!!</title>
     <url>/Nice-To-Meet-You-My-Blog/</url>
     <content><![CDATA[<p>Nice To Meet You ！</p>
@@ -140,89 +223,6 @@
       </categories>
       <tags>
         <tag>优化</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Spark AQE 的三大特性</title>
-    <url>/Spark-AQE-%E7%9A%84%E4%B8%89%E5%A4%A7%E7%89%B9%E6%80%A7/</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
-    <title>升级Spark3.4.1</title>
-    <url>/%E5%8D%87%E7%BA%A7Spark3-4-1/</url>
-    <content><![CDATA[<p><a href="https://spark.apache.org/">Apache Spark</a>，是一个多语言引擎，用于在单节点机器或集群上执行数据工程、数据科学和机器学习。</p>
-<span id="more"></span>
-
-<ul>
-<li>Batch &#x2F; streaming data 批量&#x2F;流式数据<ul>
-<li>Python、SQL、Scala、Java或R，统一数据的批处理和实时流处理</li>
-</ul>
-</li>
-<li>SQL analytics SQL分析<ul>
-<li>执行快速、分布式的ANSI SQL查询，以实现仪表板和即席报告。</li>
-<li>比大多数数据仓库更快。</li>
-</ul>
-</li>
-<li>Data science at scale 大规模数据科学<ul>
-<li>对PB级数据执行探索性数据分析（EDA），而无需采用下采样</li>
-</ul>
-</li>
-<li>Machine learning 机器学习<ul>
-<li>在电脑上训练机器学习算法，并使用相同的代码扩展到数千台机器的容错集群</li>
-</ul>
-</li>
-</ul>
-<hr>
-<h2 id="官网下载spark3-4-1的jar包"><a href="#官网下载spark3-4-1的jar包" class="headerlink" title="官网下载spark3.4.1的jar包"></a>官网下载spark3.4.1的jar包</h2><h3 id="Spark-Download"><a href="#Spark-Download" class="headerlink" title="Spark Download"></a>Spark Download</h3><p>下载  spark-3.4.1-bin-hadoop3.tgz 后，在相应目录进行解压操作</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">tar xvf  spark-3.4.1-bin-hadoop3.tgz  -C /var/local/</span><br></pre></td></tr></table></figure>
-
-<h2 id="软链更新"><a href="#软链更新" class="headerlink" title="软链更新"></a>软链更新</h2><h3 id="删除之前的软链"><a href="#删除之前的软链" class="headerlink" title="删除之前的软链"></a>删除之前的软链</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">rm spark</span><br></pre></td></tr></table></figure>
-
-<h3 id="创建新的软链："><a href="#创建新的软链：" class="headerlink" title="创建新的软链："></a>创建新的软链：</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ln -s /var/local/spark-3.4.1-bin-hadoop3  /opt/soft/spark</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>❌软链报错：目录无法访问<br>💡解决方法：用绝对路径（上面已用绝对路径）</p>
-</blockquote>
-<h2 id="修改配置文件"><a href="#修改配置文件" class="headerlink" title="修改配置文件"></a>修改配置文件</h2><h3 id="将以前版本的配置文件-copy-到当前-spark-conf-文件夹下"><a href="#将以前版本的配置文件-copy-到当前-spark-conf-文件夹下" class="headerlink" title="将以前版本的配置文件 copy 到当前 spark&#x2F;conf 文件夹下"></a>将以前版本的配置文件 copy 到当前 spark&#x2F;conf 文件夹下</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">scp spark-env.sh spark-defaults.conf  core-site.xml  hdfs-site.xml  hive-site.xml  yarn-site.xml  &lt;目标地址IP&gt;: /opt/soft/spark/conf</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>配置文件包括：<br>spark-env.sh<br>spark-defaults.conf<br>core-site.xml<br>hdfs-site.xml<br>hive-site.xml<br>yarn-site.xml （不必选）</p>
-</blockquote>
-<h3 id="Lib包更新"><a href="#Lib包更新" class="headerlink" title="Lib包更新"></a>Lib包更新</h3><ol>
-<li>更新 $SPARK_HOME&#x2F;jars&#x2F;  目录</li>
-</ol>
-<ul>
-<li>下载 iceberg-spark-runtime-*.jar</li>
-<li>下载 hive-hcatalog-core-*.jar</li>
-</ul>
-<ol start="2">
-<li>更新HDFS目录 sparkjars&#x2F; 的共享jar包</li>
-</ol>
-<ul>
-<li>将 $SPARK_HOME&#x2F;jars 下面的  *.jar  都上传到此目录</li>
-</ul>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">hdfs上创建目录</span></span><br><span class="line">hdfs dfs -mkdir /sparkjars/spark_341</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>上传命令</li>
-</ul>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">hdfs dfs -put $SPARK_HOME/jars/*.jar /sparkjars/spark_3xx</span><br></pre></td></tr></table></figure>
-
-<h2 id="测试spark"><a href="#测试spark" class="headerlink" title="测试spark"></a>测试spark</h2><h3 id="提交Pi计算测试"><a href="#提交Pi计算测试" class="headerlink" title="提交Pi计算测试"></a>提交Pi计算测试</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">date;</span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">SPARK_HOME/bin/spark-submit</span></span><br><span class="line">--class org.apache.spark.examples.SparkPi</span><br><span class="line">--master yarn</span><br><span class="line">--deploy-mode client</span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">SPARK_HOME/examples/jars/spark-examples*.jar</span></span><br><span class="line">10;date</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">/opt/soft/spark/bin/spark-submit</span><br><span class="line">--class org.apache.spark.examples.SparkPi</span><br><span class="line">--master yarn</span><br><span class="line">--deploy-mode client</span><br><span class="line">/opt/soft/spark/examples/jars/spark-examples*.jar</span><br><span class="line">10</span><br></pre></td></tr></table></figure>
-
-<h3 id="yarn-模式直接运行"><a href="#yarn-模式直接运行" class="headerlink" title="yarn 模式直接运行"></a>yarn 模式直接运行</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$</span><span class="language-bash">SPARK_HOME/bin/spark-submit --class org.apache.spark.examples.SparkPi</span></span><br><span class="line">--master yarn</span><br><span class="line">--deploy-mode cluster</span><br><span class="line">--driver-memory 4g</span><br><span class="line">--executor-memory 2g</span><br><span class="line">--executor-cores 2</span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">SPARK_HOME/examples/jars/spark-examples*.jar</span></span><br><span class="line">10</span><br></pre></td></tr></table></figure>
-
-<h3 id="spark-thrift-server测试"><a href="#spark-thrift-server测试" class="headerlink" title="spark thrift server测试"></a>spark thrift server测试</h3><ol>
-<li>sparksql 测试</li>
-</ol>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$</span><span class="language-bash">SPARK_HOME/bin/spark-sql --executor-cores 1 --executor-memory 2G --num-executors 1 --master yarn  --name spark_sql_test</span></span><br><span class="line"></span><br><span class="line">select count(*) from essd_db.ods_essd_dut_result</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Spark</category>
-      </categories>
-      <tags>
-        <tag>升级</tag>
       </tags>
   </entry>
 </search>
